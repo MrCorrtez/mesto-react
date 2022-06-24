@@ -1,0 +1,23 @@
+.exitButton {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  top: -40px;
+  right: -40px;
+  background: url("../../images/close.svg") no-repeat center;
+  border: none;
+}
+
+.exitButton:hover {
+  opacity: .6;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 600px) {
+  .exitButton {
+    width: 20px;
+    height: 20px;
+    top: -36px;
+    right: 0;
+  }
+}
