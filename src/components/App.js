@@ -1,54 +1,65 @@
+import React from 'react';
+
 import Header from './Header';
 import Content from './Content';
 import Footer from './Footer';
+import PopupWithForm from './PopupWithForm';
+import ImagePopup from './ImagePopup';
 
 function App() {
-  return (
-    <body className="root">   
 
+  const [isEditProfilePopupOpen, setEditProfileVisibility] = React.useState(false);
+  const [isAddPlacePopupOpen, setAddPlaseVisibility] = React.useState(false);
+  const [selectedCard, setSelectedCard] = React.useState({});
+  
+  function handleEditProfileClick() {
+
+    setEditProfileVisibility(true);    
+
+  }
+
+  function handleAddPlaceClick() {
+
+    setAddPlaseVisibility(true);    
+    
+  }
+
+  function closeAllPopups() {
+    setEditProfileVisibility(false);
+    setAddPlaseVisibility(false);
+    setSelectedCard({});
+  }
+
+  function handleApiError(err) {
+    setSelectedCard({link: "https://xn--443-5cd3cgu2f.xn--p1ai/wp-content/uploads/error.jpg", name: err.message});    
+  }
+  
+  function handleCardClick(card) {
+    setSelectedCard(card);
+  }
+
+  return (
+    <>  
       <Header />
-      <Content />
+      <Content onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onApiError={handleApiError} onCardClick={handleCardClick}/>
       <Footer />       
 
-      <section class="popup hidden">
-        <form class="popup__container type_profile hidden" novalidate>
-          <p class="popup__heading">Редактировать профиль</p>
-          <input class="popup__input popup__input_type_line-one" name="name" type="text" placeholder="Заполните имя" minlength="2" maxlength="40" required id="1"/>
-          <span class="popup__input-error popup__input-error_place_line1 hidden"></span>
-          <input class="popup__input popup__input_type_line-two" name="occupation" type="text" placeholder="Заполните род занятий" minlength="2" maxlength="200" required id="2"/>
-          <span class="popup__input-error popup__input-error_place_line2 hidden"></span>
-          <button type="submit" class="popup__saveButton popup__saveButton_error" disabled>Сохранить</button>
-          <button type="button" class="exitButton"></button>
-        </form>
+      <PopupWithForm formSelector="type_profile" title="Редактировать профиль" submitTitle="Сохранить" isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}>
+        <input className="popup__input popup__input_type_line-one" name="name" type="text" placeholder="Заполните имя" minLength="2" maxLength="40" required id="1"/>
+        <span className="popup__input-error popup__input-error_place_line1 hidden"></span>
+        <input className="popup__input popup__input_type_line-two" name="occupation" type="text" placeholder="Заполните род занятий" minLength="2" maxLength="200" required id="2"/>
+        <span className="popup__input-error popup__input-error_place_line2 hidden"></span>
+      </PopupWithForm> 
 
-        <form class="popup__container type_new-item hidden" novalidate>
-          <p class="popup__heading">Новое место</p>
-          <input class="popup__input popup__input_type_line-one" name="name" type="text" placeholder="Название"  minlength="2" maxlength="30" required id="1"/>
-          <span class="popup__input-error popup__input-error_place_line1 hidden"></span>
-          <input class="popup__input popup__input_type_line-two" name="link" type="url" placeholder="Ссылка на картинку" required id="2"/>
-          <span class="popup__input-error popup__input-error_place_line2 hidden"></span>
-          <button type="submit" class="popup__saveButton popup__saveButton_error" disabled>Создать</button>
-          <button type="button" class="exitButton"></button>
-        </form>
+      <PopupWithForm formSelector="type_new-item" title="Новое место" submitTitle="Создать" isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}>
+        <input className="popup__input popup__input_type_line-one" name="name" type="text" placeholder="Название"  minLength="2" maxLength="30" required id="1"/>
+        <span className="popup__input-error popup__input-error_place_line1 hidden"></span>
+        <input className="popup__input popup__input_type_line-two" name="link" type="url" placeholder="Ссылка на картинку" required id="2"/>
+        <span className="popup__input-error popup__input-error_place_line2 hidden"></span>
+      </PopupWithForm> 
 
-        <form class="popup__big-card hidden">
-          <img class="popup__image" src="" alt=""/>
-          <button type="button" class="exitButton"></button>
-          <p class="popup__caption"></p>
-        </form>
-      </section>
-
-      <template id="card-template">
-        <li class="elements__element" id="">
-          <img class="elements__image" src="" alt=""/>
-          <button type="button" class="elements__deleteButton"></button>
-          <div class="elements__info">
-            <p class="elements__name"></p>
-            <button type="button" class="elements__like"></button>
-          </div>
-        </li>
-      </template>
-    </body>
+      <ImagePopup card={selectedCard} onClose={closeAllPopups}/>                  
+    </>
   );
 }
 
