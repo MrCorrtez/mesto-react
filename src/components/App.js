@@ -3,15 +3,47 @@ import React from 'react';
 import Header from './Header';
 import Content from './Content';
 import Footer from './Footer';
-import PopupWithForm from './PopupWithForm';
+import EditProfilePopup from './EditProfilePopup';
+import AddPlacePopup from './AddPlacePopup';
 import ImagePopup from './ImagePopup';
+
+import cardsApi from '../utils/api';
+
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 function App() {
 
   const [isEditProfilePopupOpen, setEditProfileVisibility] = React.useState(false);
-  const [isAddPlacePopupOpen, setAddPlaseVisibility] = React.useState(false);
+  const [isAddPlacePopupOpen, setAddPlaceVisibility] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState({});
-  
+  const [currentUser , setCurrentUser] = React.useState({name: 'Жак-Ив Кусто', occupation: 'Исследователь океана'});
+  const [cards, setCardsList] = React.useState([]);
+
+  const isOpen = isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard.link;
+
+  React.useEffect(() => {
+    cardsApi.getCards()
+      .then(items => {
+        setCardsList(items);
+      })
+      .catch(err => handleApiError(err))
+  }); 
+
+
+  React.useEffect(() => {
+    function closeByEscape(evt) {
+      if(evt.key === 'Escape') {
+        closeAllPopups();
+      }
+    }
+    if(isOpen) {
+      document.addEventListener('keydown', closeByEscape);
+      return () => {
+        document.removeEventListener('keydown', closeByEscape);
+      }
+    }
+  }, [isOpen])
+
   function handleEditProfileClick() {
 
     setEditProfileVisibility(true);    
@@ -20,14 +52,29 @@ function App() {
 
   function handleAddPlaceClick() {
 
-    setAddPlaseVisibility(true);    
+    setAddPlaceVisibility(true);    
     
   }
 
-  function closeAllPopups() {
-    setEditProfileVisibility(false);
-    setAddPlaseVisibility(false);
-    setSelectedCard({});
+  function handleAddPlace(card) {
+    cardsApi.addCard('name=' + encodeURIComponent(card.name) + '&link=' + encodeURIComponent(card.link))
+      .then(id => {
+        const newCard = {id: Number(id), 
+                        name: card.name,
+                        link: card.link};
+        setCardsList([newCard, ...cards]);
+        
+      })
+      .catch(err => handleApiError(err))
+    closeAllPopups();
+  }
+
+  function handleCardDelete(card) {
+    cardsApi.deleteCard(card.id)
+      .then(() => {
+        setCardsList(cards.filter(c => c.id !== card.id));
+      })
+      .catch(err => handleApiError(err))
   }
 
   function handleApiError(err) {
@@ -38,29 +85,36 @@ function App() {
     setSelectedCard(card);
   }
 
+  function handleUpdateUser(user) {
+    setCurrentUser(user);
+    closeAllPopups();
+  }  
+
+  function closeAllPopups() {
+    setEditProfileVisibility(false);
+    setAddPlaceVisibility(false);
+    setSelectedCard({});
+  }
+
   return (
     <>  
-      <Header />
-      <Content onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onApiError={handleApiError} onCardClick={handleCardClick}/>
-      <Footer />       
 
-      <PopupWithForm formSelector="type_profile" title="Редактировать профиль" submitTitle="Сохранить" isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}>
-        <input className="popup__input popup__input_type_line-one" name="name" type="text" placeholder="Заполните имя" minLength="2" maxLength="40" required id="1"/>
-        <span className="popup__input-error popup__input-error_place_line1 hidden"></span>
-        <input className="popup__input popup__input_type_line-two" name="occupation" type="text" placeholder="Заполните род занятий" minLength="2" maxLength="200" required id="2"/>
-        <span className="popup__input-error popup__input-error_place_line2 hidden"></span>
-      </PopupWithForm> 
+      <CurrentUserContext.Provider value={currentUser}>    
 
-      <PopupWithForm formSelector="type_new-item" title="Новое место" submitTitle="Создать" isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}>
-        <input className="popup__input popup__input_type_line-one" name="name" type="text" placeholder="Название"  minLength="2" maxLength="30" required id="1"/>
-        <span className="popup__input-error popup__input-error_place_line1 hidden"></span>
-        <input className="popup__input popup__input_type_line-two" name="link" type="url" placeholder="Ссылка на картинку" required id="2"/>
-        <span className="popup__input-error popup__input-error_place_line2 hidden"></span>
-      </PopupWithForm> 
+        <Header />
+        <Content cards={cards} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onApiError={handleApiError} onCardClick={handleCardClick} onCardDelete={handleCardDelete}/>
+        <Footer />       
 
-      <ImagePopup card={selectedCard} onClose={closeAllPopups}/>                  
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/> 
+
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlace}/> 
+        
+        <ImagePopup card={selectedCard} onClose={closeAllPopups}/>                  
+
+      </CurrentUserContext.Provider>
     </>
   );
 }
+
 
 export default App;
