@@ -14,6 +14,13 @@
 @import url(./blocks/header/header.css);
 @import url(./blocks/header/__logo/header__logo.css);
 
+@import url(./blocks/register/register.css);
+@import url(./blocks/register/__form/register__form.css);
+@import url(./blocks/register/__heading/register__heading.css);
+@import url(./blocks/register/__input/register__input.css);
+@import url(./blocks/register/__saveButton/register__saveButton.css);
+@import url(./blocks/register/__login-link/register__login-link.css);
+
 @import url(./blocks/profile/profile.css);
 @import url(./blocks/profile/__avatar/profile__avatar.css);
 @import url(./blocks/profile/__info/profile__info.css);
