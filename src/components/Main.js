@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Header from './Header';
 import Content from './Content';
 import Footer from './Footer';
 import EditProfilePopup from './EditProfilePopup';
@@ -94,6 +95,7 @@ function Main(props) {
 
     return (
         <>
+            <Header currentMode='main' />
             <Content cards={cards} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onApiError={handleApiError} onCardClick={handleCardClick} onCardDelete={handleCardDelete}/>
             <Footer />       
 

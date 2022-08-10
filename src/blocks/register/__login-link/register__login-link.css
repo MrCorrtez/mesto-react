@@ -6,3 +6,7 @@
     color: #FFFFFF;
     text-decoration: none;  
   }
+
+  .register__login-link:hover {
+    text-decoration: underline;  
+  }
