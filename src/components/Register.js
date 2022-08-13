@@ -10,7 +10,7 @@ import Header from './Header';
 
 import ImagePopup from './ImagePopup';
 
-function Register(props) {
+function Register() {
 
     let navigate = useNavigate();
 
@@ -52,7 +52,7 @@ function Register(props) {
     function handleClosePopup() {
         setPopupImage({});
         if (isSuccess) {navigate('/sign-in');}        
-      }
+    }
 
     return (
         <>

@@ -13,7 +13,7 @@ class AuthApi {
                     }
                     )
                 .then(res => {
-                    if (res.status===400) {
+                    if (!res.ok) {
                         throw res;                        
                     }
                     return res.json();                    
@@ -23,6 +23,41 @@ class AuthApi {
                 }                    
                 )                
     }  
+
+    authorize({ password, email }) {
+        return fetch(this._server + '/signin',
+                    {method: 'POST',
+                     headers: {'Content-Type': 'application/json'},
+                     body: JSON.stringify({"password": password,
+                                          "email": email})
+                    }
+                    )
+                .then(res => {
+                    if (!res.ok) {
+                        throw res;                        
+                    }
+                    return res.json();                    
+                })
+                .then(res => {
+                    return res.token;
+                }                    
+                )                
+    }
+
+    me(jwt) {
+        return fetch(this._server + '/users/me',
+                    {method: 'GET',
+                     headers: {'Content-Type': 'application/json',
+                               'Authorization': 'Bearer ' + jwt}                     
+                    }
+                    )
+                .then(res => {
+                    if (!res.ok) {
+                        throw res;                        
+                    }
+                    return res.json();                    
+                })                
+    }
 
 }
 

@@ -24,7 +24,7 @@ function Main(props) {
         setCardsList(items);
       })
       .catch(err => handleApiError(err))
-  }); 
+  },[]); 
 
 
   React.useEffect(() => {
@@ -93,19 +93,19 @@ function Main(props) {
     setSelectedCard({});
   }
 
-    return (
-        <>
-            <Header currentMode='main' />
-            <Content cards={cards} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onApiError={handleApiError} onCardClick={handleCardClick} onCardDelete={handleCardDelete}/>
-            <Footer />       
+  return (
+      <>
+          <Header currentMode='main' />
+          <Content cards={cards} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onApiError={handleApiError} onCardClick={handleCardClick} onCardDelete={handleCardDelete}/>
+          <Footer />       
 
-            <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/> 
+          <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/> 
 
-            <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlace}/> 
-            
-            <ImagePopup card={selectedCard} onClose={closeAllPopups}/>          
-        </>
-    );
-  }
+          <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlace}/> 
+          
+          <ImagePopup card={selectedCard} onClose={closeAllPopups}/>          
+      </>
+  );
+}
 
 export default Main;
